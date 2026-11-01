@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Archplan Key Generator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="AP Keygen">
+<meta name="theme-color" content="#16233f">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Crect width='180' height='180' rx='36' fill='%2316233f'/%3E%3Ctext x='90' y='120' font-size='96' text-anchor='middle' fill='%23c9a84c' font-family='Arial'%3EA%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Crect width='32' height='32' rx='6' fill='%2316233f'/%3E%3Ctext x='16' y='23' font-size='20' text-anchor='middle' fill='%23c9a84c' font-family='Arial'%3EA%3C/text%3E%3C/svg%3E">
+<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Archplan%20Key%20Generator%22%2C%22short_name%22%3A%22AP%20Keygen%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%2316233f%22%2C%22theme_color%22%3A%22%2316233f%22%7D">
+<style>
+  :root{ --ink:#16233f; --brass:#c9a84c; --bg:#f4f5f7; --card:#ffffff; --muted:#667; --danger:#b23b3b; --line:#dde1e8; }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:#1c2433;
+       padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);}
+  header{background:var(--ink);color:#fff;padding:16px;display:flex;align-items:center;gap:12px}
+  header .logo{width:34px;height:34px;border-radius:8px;background:var(--brass);color:var(--ink);font-weight:700;
+       display:flex;align-items:center;justify-content:center;font-size:20px}
+  header h1{font-size:17px;margin:0;font-weight:600}
+  main{max-width:560px;margin:0 auto;padding:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin:0 0 14px}
+  label{display:block;font-size:13px;color:var(--muted);margin:0 0 6px}
+  textarea,input,select{width:100%;font:inherit;padding:10px;border:1px solid var(--line);border-radius:8px;background:#fff}
+  textarea{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;min-height:64px;resize:vertical}
+  .mono{font-family:ui-monospace,Menlo,Consolas,monospace}
+  .row{display:flex;gap:8px;flex-wrap:wrap}
+  .row>*{flex:1}
+  button{font:inherit;font-weight:600;padding:11px 14px;border:0;border-radius:9px;background:var(--ink);color:#fff;cursor:pointer}
+  button.secondary{background:#eef0f4;color:var(--ink);border:1px solid var(--line)}
+  button.brass{background:var(--brass);color:var(--ink)}
+  button:disabled{opacity:.45}
+  .seg{display:flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+  .seg button{flex:1;border-radius:0;background:#fff;color:var(--ink)}
+  .seg button.on{background:var(--ink);color:#fff}
+  .kv{display:flex;justify-content:space-between;gap:12px;padding:5px 0;border-bottom:1px solid var(--line);font-size:14px}
+  .kv:last-child{border-bottom:0}
+  .kv .k{color:var(--muted)}
+  .kv .v{text-align:right;word-break:break-all}
+  .msg{font-size:13px;margin-top:8px}
+  .msg.err{color:var(--danger)}
+  .keyout{background:#faf7ef;border:1px solid var(--brass);border-radius:8px;padding:10px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;word-break:break-all;user-select:all}
+  .note{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.4}
+  h2{font-size:14px;margin:0 0 10px;color:var(--ink)}
+  .hide{display:none}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">A</div>
+  <h1>Archplan Key Generator</h1>
+</header>
+<main>
+
+  <!-- KEY IMPORT -->
+  <section id="importCard" class="card hide">
+    <h2>Import signing key (once)</h2>
+    <label>Paste the contents of your <span class="mono">private-key.xml</span></label>
+    <textarea id="xml" placeholder="&lt;RSAKeyValue&gt;&lt;Modulus&gt;...&lt;/Modulus&gt;...&lt;/RSAKeyValue&gt;"></textarea>
+    <div class="note">It is validated, then stored only in this browser on this device. It is never sent anywhere. Do this once, then delete the copy you pasted from.</div>
+    <div id="importMsg" class="msg err"></div>
+    <div class="row" style="margin-top:10px">
+      <button id="importBtn">Import key</button>
+    </div>
+  </section>
+
+  <!-- GENERATOR -->
+  <section id="genCard" class="card hide">
+    <h2>Product</h2>
+    <div class="seg" id="seg">
+      <button data-p="0" class="on">Archplan Toolkit</button>
+      <button data-p="1">SLB Manager</button>
+    </div>
+
+    <div style="height:14px"></div>
+    <label>Request code (Toolkit) or Machine ID (SLB)</label>
+    <textarea id="req" placeholder="Paste the customer's request code here"></textarea>
+    <div class="row" style="margin-top:8px">
+      <button class="secondary" id="pasteBtn" type="button">Paste</button>
+      <button class="secondary" id="clearBtn" type="button">Clear</button>
+    </div>
+
+    <div id="details" class="card hide" style="margin-top:12px;margin-bottom:0;background:#fbfcfe">
+      <div id="kvs"></div>
+    </div>
+
+    <div style="height:14px"></div>
+    <label>Licensed to</label>
+    <input id="lic" placeholder="Customer name" autocapitalize="words" autocomplete="off">
+
+    <div class="row" style="margin-top:12px">
+      <button class="brass" id="genBtn" disabled>Generate Key</button>
+    </div>
+
+    <div id="genMsg" class="msg"></div>
+
+    <div id="keyWrap" class="hide" style="margin-top:12px">
+      <label>Activation key</label>
+      <div id="keyOut" class="keyout"></div>
+      <div class="row" style="margin-top:8px">
+        <button class="secondary" id="copyBtn" type="button">Copy key</button>
+        <button class="secondary" id="mailBtn" type="button">Reply by eMail</button>
+      </div>
+    </div>
+
+    <div class="note" style="margin-top:14px">
+      Keys are byte-identical to the Windows Key Generator. The key works only on
+      the computer, platform and version it was issued for.
+    </div>
+    <div class="row" style="margin-top:10px">
+      <button class="secondary" id="changeKeyBtn" type="button">Change signing key</button>
+    </div>
+  </section>
+
+</main>
+
+<script>
+"use strict";
+
+/* ============================ SHA-256 (pure JS) ============================ */
+const K256=[0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,
+0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,
+0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,
+0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,
+0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,
+0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,
+0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,
+0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2];
+function ror(x,n){return (x>>>n)|(x<<(32-n));}
+function sha256(bytes){
+  let h0=0x6a09e667,h1=0xbb67ae85,h2=0x3c6ef372,h3=0xa54ff53a,h4=0x510e527f,h5=0x9b05688c,h6=0x1f83d9ab,h7=0x5be0cd19;
+  const l=bytes.length, bitLen=l*8;
+  let k=(56-(l+1)%64+64)%64;
+  const total=l+1+k+8;
+  const m=new Uint8Array(total);
+  m.set(bytes); m[l]=0x80;
+  const hi=Math.floor(bitLen/0x100000000)>>>0, lo=bitLen>>>0;
+  m[total-8]=(hi>>>24)&255; m[total-7]=(hi>>>16)&255; m[total-6]=(hi>>>8)&255; m[total-5]=hi&255;
+  m[total-4]=(lo>>>24)&255; m[total-3]=(lo>>>16)&255; m[total-2]=(lo>>>8)&255; m[total-1]=lo&255;
+  const w=new Int32Array(64);
+  for(let off=0;off<total;off+=64){
+    for(let i=0;i<16;i++) w[i]=(m[off+4*i]<<24)|(m[off+4*i+1]<<16)|(m[off+4*i+2]<<8)|(m[off+4*i+3]);
+    for(let i=16;i<64;i++){
+      const s0=ror(w[i-15],7)^ror(w[i-15],18)^(w[i-15]>>>3);
+      const s1=ror(w[i-2],17)^ror(w[i-2],19)^(w[i-2]>>>10);
+      w[i]=(w[i-16]+s0+w[i-7]+s1)|0;
+    }
+    let a=h0,b=h1,c=h2,d=h3,e=h4,f=h5,g=h6,hh=h7;
+    for(let i=0;i<64;i++){
+      const S1=ror(e,6)^ror(e,11)^ror(e,25);
+      const ch=(e&f)^((~e)&g);
+      const t1=(hh+S1+ch+K256[i]+w[i])|0;
+      const S0=ror(a,2)^ror(a,13)^ror(a,22);
+      const maj=(a&b)^(a&c)^(b&c);
+      const t2=(S0+maj)|0;
+      hh=g;g=f;f=e;e=(d+t1)|0;d=c;c=b;b=a;a=(t1+t2)|0;
+    }
+    h0=(h0+a)|0;h1=(h1+b)|0;h2=(h2+c)|0;h3=(h3+d)|0;h4=(h4+e)|0;h5=(h5+f)|0;h6=(h6+g)|0;h7=(h7+hh)|0;
+  }
+  const out=new Uint8Array(32), hs=[h0,h1,h2,h3,h4,h5,h6,h7];
+  for(let i=0;i<8;i++){ out[4*i]=(hs[i]>>>24)&255; out[4*i+1]=(hs[i]>>>16)&255; out[4*i+2]=(hs[i]>>>8)&255; out[4*i+3]=hs[i]&255; }
+  return out;
+}
+
+/* ============================ base32 (Crockford) ========================== */
+const B32="0123456789ABCDEFGHJKMNPQRSTVWXYZ";
+function b32clean(s){
+  let o="";
+  for(const raw of (s||"")){
+    let c=raw.toUpperCase();
+    if(c==="O")c="0"; else if(c==="I"||c==="L")c="1";
+    if((c>="0"&&c<="9")||(c>="A"&&c<="Z")) o+=c;
+  }
+  return o;
+}
+function b32decode(cl){
+  if(!cl) return null;
+  const out=[]; let buf=0,bits=0;
+  for(const ch of cl){
+    const v=B32.indexOf(ch);
+    if(v<0) return null;
+    buf=(buf<<5)|v; bits+=5;
+    if(bits>=8){ bits-=8; out.push((buf>>bits)&0xFF); buf&=(1<<bits)-1; }
+  }
+  return out;
+}
+function b32encode(data){
+  let o="",buf=0,bits=0;
+  for(const b of data){
+    buf=(buf<<8)|b; bits+=8;
+    while(bits>=5){ bits-=5; o+=B32[(buf>>bits)&31]; buf&=(1<<bits)-1; }
+  }
+  if(bits>0) o+=B32[(buf<<(5-bits))&31];
+  return o;
+}
+function group(s,n){ let o="",i=0; for(const ch of s){ if(i>0&&i%n===0)o+="-"; o+=ch; i++; } return o; }
+function fmtMachine(id){ return group(b32encode(id),4); }
+
+/* ============================ BigInt RSA sign ============================= */
+function b64ToBytes(b64){ const bin=atob(b64.replace(/\s+/g,"")); const a=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i); return a; }
+function bytesToBig(a){ let x=0n; for(const b of a) x=(x<<8n)|BigInt(b); return x; }
+function bigToBytes(x,len){ const a=new Uint8Array(len); for(let i=len-1;i>=0;i--){ a[i]=Number(x & 0xFFn); x>>=8n; } return a; }
+function modpow(base,exp,mod){ let r=1n; base%=mod; while(exp>0n){ if(exp&1n) r=(r*base)%mod; exp>>=1n; base=(base*base)%mod; } return r; }
+const SHA256_PREFIX=[0x30,0x31,0x30,0x0d,0x06,0x09,0x60,0x86,0x48,0x01,0x65,0x03,0x04,0x02,0x01,0x05,0x00,0x04,0x20];
+function pkcs1sign(msgBytes,key){ // key = {n,d,klen}
+  const hash=sha256(msgBytes);
+  const T=SHA256_PREFIX.concat(Array.from(hash));
+  const psLen=key.klen-3-T.length;
+  if(psLen<8) throw new Error("key too small");
+  const EM=[0x00,0x01].concat(new Array(psLen).fill(0xFF),[0x00],T);
+  const m=bytesToBig(Uint8Array.from(EM));
+  const s=modpow(m,key.d,key.n);
+  return Array.from(bigToBytes(s,key.klen));
+}
+
+/* ============================ licence key ================================= */
+const TOOLKIT="ARCHPLAN-TOOLKIT", SLB="ARCHPLAN-SLB-MANAGER";
+function signedBytes(machine,licensee,product){
+  const s=product+"|1|"+fmtMachine(machine)+"|"+licensee;
+  return Uint8Array.from(Array.from(s).map(c=>c.charCodeAt(0)>127? 0x3f : c.charCodeAt(0))); // ASCII
+}
+function createKey(machine,licensee,product,key){
+  const lic=(licensee||"").trim();
+  const name=Array.from(lic).map(c=>c.charCodeAt(0));
+  if(lic.length<1||name.length>60) throw new Error("Enter the licensee's name (1 to 60 characters).");
+  const sig=pkcs1sign(signedBytes(machine,lic,product),key);
+  if(sig.length!==128) throw new Error("Unexpected signature length "+sig.length+".");
+  const blob=[1].concat(machine,[name.length],name,sig);
+  return group(b32encode(blob),5);
+}
+function parseMachineId(text){
+  const cl=b32clean(text);
+  if(cl.length!==16) return null;
+  const b=b32decode(cl);
+  return (b&&b.length===10)? b : null;
+}
+function parseRequest(text){
+  const b=b32decode(b32clean(text));
+  if(!b||b.length<14) throw new Error("That request code is incomplete.");
+  let p=0;
+  if(b[p++]!==1) throw new Error("That request code is from a different toolkit version.");
+  const plat=b[p++], verLen=b[p++];
+  if(p+verLen>b.length) throw new Error("That request code is incomplete.");
+  const ver=String.fromCharCode.apply(null,b.slice(p,p+verLen)); p+=verLen;
+  const serLen=b[p++];
+  if(p+serLen>b.length) throw new Error("That request code is incomplete.");
+  const ser=String.fromCharCode.apply(null,b.slice(p,p+serLen)); p+=serLen;
+  if(p+10!==b.length) throw new Error("That request code is the wrong length.");
+  const machine=b.slice(p,p+10);
+  return {machine, machineText:fmtMachine(machine), platformCode:plat,
+          platform: plat===2?"ZWCAD":(plat===1?"AutoCAD":"Unknown"), version:ver, serial:ser};
+}
+
+/* ============================ key storage ================================ */
+function between(s,a,b){ const i=s.indexOf(a); if(i<0)return null; const j=s.indexOf(b,i+a.length); if(j<0)return null; return s.substring(i+a.length,j); }
+function importXml(xml){
+  const mod=between(xml,"<Modulus>","</Modulus>"), exp=between(xml,"<Exponent>","</Exponent>"), dd=between(xml,"<D>","</D>");
+  if(!mod||!exp||!dd) throw new Error("That is not a valid private-key.xml (need Modulus, Exponent and D).");
+  const nB=b64ToBytes(mod), n=bytesToBig(nB), e=bytesToBig(b64ToBytes(exp)), d=bytesToBig(b64ToBytes(dd)), klen=nB.length;
+  const key={n,e,d,klen};
+  // self-check: sign a sample and verify with e
+  const test=signedBytes([1,2,3,4,5,6,7,8,9,10],"Self Test",TOOLKIT);
+  const sig=pkcs1sign(test,key);
+  const recovered=modpow(bytesToBig(Uint8Array.from(sig)),e,n);
+  const hash=sha256(test), T=SHA256_PREFIX.concat(Array.from(hash));
+  const EM=[0,1].concat(new Array(klen-3-T.length).fill(0xFF),[0],T);
+  if(recovered!==bytesToBig(Uint8Array.from(EM))) throw new Error("The key failed its self-check. Check you pasted the whole private-key.xml.");
+  return key;
+}
+function saveKey(xml){ const k=importXml(xml); localStorage.setItem("ap_key_xml",xml); return k; }
+function loadKey(){ const xml=localStorage.getItem("ap_key_xml"); if(!xml)return null; try{ return importXml(xml); }catch(e){ return null; } }
+function clearKey(){ localStorage.removeItem("ap_key_xml"); }
+
+/* ============================ UI ========================================= */
+let KEY=null, product=0, decoded=null, plainMachine=null, lastKeyText="";
+const $=id=>document.getElementById(id);
+
+function show(){
+  KEY=loadKey();
+  $("importCard").classList.toggle("hide",!!KEY);
+  $("genCard").classList.toggle("hide",!KEY);
+}
+function setMsg(t,err){ const m=$("genMsg"); m.textContent=t||""; m.className="msg"+(err?" err":""); }
+
+function decode(){
+  setMsg(""); $("keyWrap").classList.add("hide"); lastKeyText="";
+  const txt=$("req").value;
+  decoded=null; plainMachine=null;
+  try{ decoded=parseRequest(txt); }catch(e){ plainMachine=parseMachineId(txt); }
+  const d=$("details"), kv=$("kvs");
+  if(decoded){
+    kv.innerHTML=
+      row("Platform",decoded.platform+" "+decoded.version)+
+      row("Serial",decoded.serial||"(none)")+
+      row("Machine ID",decoded.machineText);
+    d.classList.remove("hide");
+  } else if(plainMachine){
+    kv.innerHTML=row("Machine ID",fmtMachine(plainMachine));
+    d.classList.remove("hide");
+  } else { d.classList.add("hide"); }
+  updateGen();
+}
+function row(k,v){ return '<div class="kv"><span class="k">'+esc(k)+'</span><span class="v mono">'+esc(v)+'</span></div>'; }
+function esc(s){ return (s+"").replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+function updateGen(){ $("genBtn").disabled = !($("lic").value.trim() && (decoded||plainMachine)); }
+
+function generate(){
+  try{
+    if(!KEY){ setMsg("Signing key not found. Import it again.",true); return; }
+    const pid = product===1? SLB : TOOLKIT;
+    const machine = decoded? decoded.machine : plainMachine;
+    if(!machine){ setMsg("Paste a valid request code or Machine ID.",true); return; }
+    lastKeyText=createKey(machine,$("lic").value,pid,KEY);
+    $("keyOut").textContent=lastKeyText;
+    $("keyWrap").classList.remove("hide");
+    const who=$("lic").value.trim();
+    setMsg((product===1?"SLB Manager":"Toolkit")+" key for "+who+(decoded?" ("+decoded.platform+" "+decoded.version+")":"")+".",false);
+  }catch(e){ setMsg(e.message,true); $("keyWrap").classList.add("hide"); }
+}
+function mailto(){
+  const who=$("lic").value.trim();
+  let body="Here is your registration key for the Archplan "+(product===1?"SLB Manager":"Toolkit")+".\n\n";
+  body+="Licensed to: "+who+"\n";
+  if(decoded) body+="Platform: "+decoded.platform+" "+decoded.version+"\n";
+  body+="\n"+lastKeyText+"\n\nPaste the whole key into the registration window and click Register. The key works only on the computer and version it was issued for.";
+  location.href="mailto:?subject="+encodeURIComponent("Archplan activation key")+"&body="+encodeURIComponent(body);
+}
+
+/* wire up */
+$("importBtn").onclick=()=>{ try{ KEY=saveKey($("xml").value); $("importMsg").textContent=""; $("xml").value=""; show(); }catch(e){ $("importMsg").textContent=e.message; } };
+$("seg").querySelectorAll("button").forEach(b=>b.onclick=()=>{ product=+b.dataset.p; $("seg").querySelectorAll("button").forEach(x=>x.classList.remove("on")); b.classList.add("on"); });
+$("req").addEventListener("input",decode);
+$("lic").addEventListener("input",updateGen);
+$("pasteBtn").onclick=async()=>{ try{ $("req").value=await navigator.clipboard.readText(); decode(); }catch(e){ setMsg("Could not read clipboard. Paste into the box manually.",true); } };
+$("clearBtn").onclick=()=>{ $("req").value=""; decode(); };
+$("genBtn").onclick=generate;
+$("copyBtn").onclick=async()=>{ try{ await navigator.clipboard.writeText(lastKeyText); setMsg("Key copied.",false); }catch(e){ setMsg("Select the key and copy it manually.",true); } };
+$("mailBtn").onclick=mailto;
+$("changeKeyBtn").onclick=()=>{ if(confirm("Remove the stored signing key from this browser?")){ clearKey(); show(); } };
+
+show();
+</script>
+</body>
+</html>
